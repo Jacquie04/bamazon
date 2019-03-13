@@ -7,33 +7,53 @@ inquirer.prompt([
         name: "operator",
         message: "Select which action you would like to take: ",
         choices: ['Buy an Item', 'Exit']
+    },
+    {
+        type: "list",
+        name: "selector",
+        message: "Select which product you would like to buy using its ID number: ",
+        choices: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+
     }
 
 ]).then(function (action) {
-console.log(action.operator);
-console.log(action.operator == 'Buy an Item');
-console.log(action.operator === 'Buy an Item');
-if (action.operator == 'Buy an Item') {
+    console.log(action.operator);
+    console.log(action.operator == 'Buy an Item');
+    console.log(action.operator === 'Buy an Item');
+    if (action.operator == 'Buy an Item') {
 
         console.log("==============================================");
         console.log("");
         console.log("Welcome");
         console.log("What would you like to buy today?")
         console.log("==============================================");
-        readProducts();
-        buyProduct();
-    }
-    // If the user exits
-    else {
+        console.log("Showing all products offered...\n");
+        connection.query("SELECT * FROM products", function (err, res) {
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                console.log("ID | Product | Price | Quantity")
+                console.log("-------------------------------");
+                console.log(" " + res[i].id + " | " + res[i].product_name + " | " + res[i].price + " | " + res[i].stock_quantity);
+                console.log("-------------------------------");
 
-        console.log("==============================================");
-        console.log("");
-        console.log("Good Bye!");
-        console.log("Hope you come again soon!");
-        console.log("");
-        console.log("==============================================");
-        exit();
-    }
+                console.log("==============================================");
+                console.log("");
+                console.log(buy.selector);
+                console.log("")
+                console.log("==============================================");
+            } //updateProduct();
+        });
+    } else {
+
+    console.log("==============================================");
+    console.log("");
+    console.log("Good Bye!");
+    console.log("Hope you come again soon!");
+    console.log("");
+    console.log("==============================================");
+    exit();
+
+};
 });
 
 var mysql = require("mysql");
@@ -57,36 +77,6 @@ connection.connect(function (err) {
 });
 
 
-function buyProduct() {
-  
-
-inquirer.prompt([
-    {
-            type: "list",
-            name: "selector",
-            message: "Select which product you would like to buy using its ID number: ",
-            choices: ["1","2","3","4","5","6","7","8","9","10"]
-        
-     },
-     {
-            type: "input",
-            name: "quantity",
-            message: "How much of the selected item would you like to buy?"
-            
-     }
-    ]).then(function (buy) {
-        console.log("==============================================");
-        console.log("");
-        console.log(buy.selector);
-        console.log("")
-        console.log("==============================================");
-        console.log("")
-        console.log("Confirming you would like to buy " + buy.quantity + "units");
-        console.log("")
-
-    } //updateProduct();
-    );
-};
 
 function updateProduct() {
     console.log("Updating all quantities...\n");
@@ -131,12 +121,12 @@ function readProducts() {
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
         for (var i = 0; i < res.length; i++) {
-        console.log("ID | Product | Price | Quantity")
-        console.log("-------------------------------");
-        console.log(" " + res[i].id + " | " + res[i].product_name + " | " + res[i].price + " | " + res[i].stock_quantity);
-        console.log("-------------------------------");
+            console.log("ID | Product | Price | Quantity")
+            console.log("-------------------------------");
+            console.log(" " + res[i].id + " | " + res[i].product_name + " | " + res[i].price + " | " + res[i].stock_quantity);
+            console.log("-------------------------------");
         }
-    
+
     })
 };
 
@@ -144,6 +134,3 @@ function exit() {
     console.log("Exiting...\n");
     connection.end();
 };
-
-
-      
